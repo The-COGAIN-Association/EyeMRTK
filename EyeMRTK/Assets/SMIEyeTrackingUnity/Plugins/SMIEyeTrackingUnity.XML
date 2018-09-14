@@ -1,0 +1,798 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SMIEyeTrackingUnity</name>
+    </assembly>
+    <members>
+        <member name="T:SMI.UnityUtility.Notificationbehaviour">
+            <summary>
+            SMI VR Notification Monobehaviour. It is used in the notification Prefab.
+            </summary>
+        </member>
+        <member name="F:SMI.UnityUtility.Notificationbehaviour.duration">
+            <summary>
+            Duration of the messagebox
+            </summary>
+        </member>
+        <member name="F:SMI.UnityUtility.Notificationbehaviour.mainCamera">
+            <summary>
+            Main camera for getting the culling mask
+            </summary>
+        </member>
+        <member name="T:SMI.GazeMonoBehaviour">
+            <summary>
+            Base class for MonoBehaviour with gaze interaction.
+            Inherit this class and add to your game object to implement gaze interaction behaviours.
+            </summary>
+        </member>
+        <member name="F:SMI.GazeMonoBehaviour.isSelected">
+            <summary>
+            Is true when the gaze ray hits with the object
+            </summary>
+        </member>
+        <member name="M:SMI.GazeMonoBehaviour.OnElementHit(UnityEngine.RaycastHit)">
+            <summary>
+            Inherited from MonoBehaviour. This function is called when ray cast is hit with the object.
+            </summary>
+            <param name="hitInformation"> Raycasthit hit information</param>
+        </member>
+        <member name="M:SMI.GazeMonoBehaviour.OnObjectExit">
+            <summary>
+            This function is called when gaze ray cast exits from the object.
+            </summary>
+        </member>
+        <member name="M:SMI.GazeMonoBehaviour.OnGazeEnter(UnityEngine.RaycastHit)">
+            <summary>
+            This function is called when the gaze enters the object
+            </summary>
+            <param name="hitInformation">RaycastHit hit information</param>
+        </member>
+        <member name="M:SMI.GazeMonoBehaviour.OnGazeStay(UnityEngine.RaycastHit)">
+            <summary>
+            This function is called while the gaze stays on the object
+            </summary>
+            <param name="hitInformation">RaycastHit information</param>
+        </member>
+        <member name="M:SMI.GazeMonoBehaviour.OnGazeExit">
+            <summary>
+            This function is called when the gaze exits the object
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity">
+            <summary>
+            MonoBehaviour script to use the main functionalities of SMI's eye tracking HMD. 
+            Add this script to your camera game object to make use of the eye tracking functions.
+            If you have at least one SMIEyeTrackingUnity component in your Unity scene, 
+            it creates a singleton instance which you can access from anywhere in your own script.
+            The singleton instance can be accessed via SMI.SMIEyeTrackingUnity.Instance.
+            </summary>
+            <summary>
+            MonoBehaviour script for eye tracking. Get the SMIEyeTrackingUnity singleton instance by SMI.SMIEyeTrackingUnity.Instance.
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper">
+            <summary>
+            C wrapper of the functions for the SMI HMD SDK
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_setCallback(System.Delegate)">
+            <summary>
+            set the userFunction which should be called asynchronously when a gaze data sample is available
+            </summary>
+            <param name="callbackFunction"></param>
+            <returns>returns SMI_RET_SUCCES if the callback function is set</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_stopStreaming">
+            <summary>
+            stop the data streaming
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_release">
+            <summary>
+            disconnect from the eye tracking server
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_init">
+            <summary>
+            disconnect from the eye tracking server
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_CalibrationTypeEnum">
+            @enum smi_CalibrationTypeEnum
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_CalibrationPointsEnum">
+            @enum smi_CalibrationPointsEnum
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_CalibrationPatternEnum">
+            @enum smi_CalibrationPointsEnum
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_CalibrationFlagsEnum">
+            @enum smi_CalibrationFlagsEnum
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_CalibrationDataTypeEnum">
+            @enum smi_CalibrationDataTypeEnum
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image">
+            <summary>
+            image struct
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image.data">
+            <summary>
+            data pointer
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image.size">
+            <summary>
+            size
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image.width">
+            <summary>
+            width of image
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image.height">
+            <summary>
+            height of image
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIcWrapper.smi_Image.tag">
+            <summary>
+            image tag
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum">
+            <summary>
+            eye tracking states
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_INITIALIZED">
+            <summary>
+            smi_init() has finished executing
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_STREAMING">
+            <summary>
+            smi_startStreaming() has been called
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_SIMULATION_MODE">
+            <summary>
+            the API is streaming pre-recorded data without connecting to the eye tracking server
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_CONNECTED">
+            <summary>
+            the API has successfully connected to the server or is in simulation mode
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_CALIBRATING">
+            <summary>
+            a calibration is being executed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_SHOWING_VALIDATION">
+            <summary>
+            a live validation is shown
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_EXECUTING_NUMERICAL_VALIDATION">
+            <summary>
+            a numerical validation is being executed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_RUNNING_POSITIONAL_GUIDANCE">
+            <summary>
+            a positional guidance is shown
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.smi_StateFlagEnum.SMI_STATE_SHOWING_LOADING_SCREEN">
+            <summary>
+            the loading screen is shown
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.ErrorIDContainer">
+            <summary>
+            error ID and message can be converted in this class 
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.ErrorIDContainer.successString">
+            <summary>
+            if the operation is successful, this message is returned
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.ErrorIDContainer.errorId">
+            <summary>
+            conversion table for error ID and error message
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.ErrorIDContainer.getErrorMessage(System.Int32)">
+            <summary>
+            converts the error ID into a readable Message
+            </summary>
+            <param name="id">error ID</param>
+            <returns>error message in string</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.ErrorIDContainer.getErrorId(System.String)">
+            <summary>
+            gets the error ID from string (e.g., SMI_SUCCESS)
+            </summary>
+            <param name="s">error message in string</param>
+            <returns>error ID</returns>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.GazeModel">
+            <summary>
+            data storage of the GazeData in Unity
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.GazeModel.errorID">
+            <summary>
+            returned value from SMI HMD API
+            check the message by ErrorIDContainer.getErrorMessage(errorID) for error messages
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.GazeModel.connectionRoutineDone">
+            <summary>
+            if the connection to the eye tracking server is successfully established, this flag will become true
+            </summary>
+        </member>
+        <member name="P:SMI.SMIEyeTrackingUnity.GazeModel.dataSample">
+            <summary>
+            gaze sample data streamed from the eye tracking server
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.unity_SampleHMD">
+            <summary>
+            gaze sample data received from the eye tracking server is formatted to this class
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.cameraRaycast">
+            <summary>
+            normalized direction of the averaged ("cyclops") gaze
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftGazeDirection">
+            <summary>
+            normalized gaze direction of the left eye
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightGazeDirection">
+            <summary>
+            normalized gaze direction of the right eye
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftGazeBase">
+            <summary>
+            gaze base point (eye ball center) of left eye [m]
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightGazeBase">
+            <summary>
+            gaze base point (eye ball center) of right eye [m]
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.binocularPor">
+            <summary>
+            the mapped combined (averaged) point of regard on the virtual display
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftPor">
+            <summary>
+            the left point of regard on the virtual display
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightPor">
+            <summary>
+            the right point of regard on  the virtual display
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftPupilCenter">
+            <summary>
+            the position of the left eyes pupil
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightPupilCenter">
+            <summary>
+            the position of the right eyes pupil
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftPupilRadius">
+            <summary>
+            the radius of the left eyes pupil
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightPupilRadius">
+            <summary>
+            the radius of the right eyes pupil
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.ipd">
+            <summary>
+            the interpupillary distance (IPD) [m]
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.iod">
+            <summary>
+            the interocular distance (IOD) [m]
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.leftEyeImage">
+            <summary>
+            left eye image
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.rightEyeImage">
+            <summary>
+            right eye image
+            only available if licensed
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.unity_SampleHMD.timeStamp">
+            <summary>
+            sample timestamp [nsec]
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.SetMaxRayCastDistance(System.Single)">
+            <summary>
+            Max Distance for the Raycasting
+            </summary>
+            <param name="v"></param>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.SetLayerForGazeSelection(UnityEngine.LayerMask)">
+            <summary>
+            Layers for gaze selection
+            </summary>
+            <param name="v"></param>
+        </member>
+        <member name="P:SMI.SMIEyeTrackingUnity.SMIGazeController.unityObject">
+            <summary>
+            Unity game object of SMIEyeTrackingUnity
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.OnApplicationQuit">
+            <summary>
+            Kill eye tracking server process
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_getRayFromGaze">
+            <summary>
+            Calculate a ray based on the position and the averaged POR 
+            </summary>
+            <returns> A Ray based from the Gaze Direction</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_getRaycastHitFromGaze(UnityEngine.RaycastHit@)">
+            <summary>
+            Doing a Raycast and write the output into the RaycastHit hitinfo
+            </summary>
+            <param name="hitInfo"> Write the informations about the Raycast into the RaycastHit Object</param>
+            <returns> Returns true, when the raycast was sucessful</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_getGameObjectInFocus">
+            <summary>
+             Returns the Object in Focus of the Raycast from the Gaze
+            </summary>
+            <returns> The focused Gameobject</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_initDevice">
+            <summary>
+            Set the Callback and start the datastreaming.
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_setCallback">
+            <summary>
+            Set the Datastream Callback 
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_startStreaming">
+            <summary>
+            Start the Datastreaming
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIGazeController.smi_callBackGetData(System.IntPtr)">
+            <summary>
+            Write the Data from the Sample into the GazeModel
+            </summary>
+            <param name="result"> Pointer to a smi_CallbackDataStruct</param>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.ThrowNotification">
+            <summary>
+            Class for notification message dialog in VR
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.ThrowNotification.ShowText(UnityEngine.Camera,System.String,System.Single)">
+            <summary>
+            Show notification text dialog in VR
+            </summary>
+            <param name="camera">Camera to show the message</param>
+            <param name="text">Text message to be presented</param>
+            <param name="duration">Duration for the message box</param>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIUserEvent">
+            <summary>
+            list of events which can be triggered by user input
+            define a combination of SMIUserEvent and keycode in input events in inspector to have user input events
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.None">
+            <summary>
+            user event: none
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.OnePointCalibration">
+            <summary>
+            trigger smi_StartOnePointCalibration()
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.ThreePointCalibration">
+            <summary>
+            trigger smi_StartThreePointCalibration()
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.FivePointCalibration">
+            <summary>
+            trigger smi_StartFivePointCalibration()
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.CloseVisualization">
+            <summary>
+            trigger smi_CloseVisualization()
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserEvent.ResetCalibration">
+            <summary>
+            trigger smi_ResetCalibration()
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.SMIUserInputEvent">
+            <summary>
+            user input event is created with event type and keycode combination
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserInputEvent.e">
+            <summary>
+            event type
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserInputEvent.holding">
+            <summary>
+            if this value is not none, the player must keep pressing this key
+            </summary>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.SMIUserInputEvent.press">
+            <summary>
+            keycode for event trigger
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.SMIUserInputEvent.#ctor(SMI.SMIEyeTrackingUnity.SMIUserEvent,UnityEngine.KeyCode,UnityEngine.KeyCode)">
+            <summary>
+            create user input event
+            </summary>
+            <param name="e">SMIUserEvent</param>
+            <param name="holding">keycode for key pressed</param>
+            <param name="press">keycode for key down</param>
+        </member>
+        <member name="F:SMI.SMIEyeTrackingUnity.enableSMINotificationInVR">
+            <summary>
+            if this value is true, a notification will appear in the VR space after executing an SMI eye tracking function (e.g., Reset calibration)
+            </summary>
+        </member>
+        <member name="P:SMI.SMIEyeTrackingUnity.layerForGazeSelection">
+            <summary>
+            gaze interaction can be limited to a specific layer, as a result the gaze ray collides with the selected layer only. This value cannot be changed during runtime
+            </summary>
+        </member>
+        <member name="P:SMI.SMIEyeTrackingUnity.definedInputEvents">
+            <summary>
+            SMI user input events set in inspector
+            </summary>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.CalibrationReturnCallback">
+            <summary>
+            receives the calibration result when a calibration process is executed
+            </summary>
+            <param name="CalibrationReturnCode">
+            return code of the calibration call
+            </param>
+            <remarks>
+            a string type return message can be obtained by SMI.SMIEyeTrackingUnity.errorIDContainer.getErrorMessage(CalibrationReturnCode) 
+            <para/>SMI_SUCCESS: calibration was successfully done
+            <para/>SMI_OPERATION_FAILED: calibration process was aborted
+            </remarks>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_SetCalibrationReturnCallback(SMI.SMIEyeTrackingUnity.CalibrationReturnCallback)">
+            <summary>
+            to receive the calibration results from the HMD API, set your own callback function
+            </summary>
+            <param name="function">
+            callback function for calibration return values
+            </param>
+        </member>
+        <member name="T:SMI.SMIEyeTrackingUnity.AsyncGazeSampleCallback">
+            <summary>
+            receives individual gaze sample as soon as it is computed
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_SetAsyncGazeSampleCallback(SMI.SMIEyeTrackingUnity.AsyncGazeSampleCallback)">
+            <summary>
+            to receive gaze sample outside the Unity rendering loop, set your own gaze sample callback.
+            The values you get within this callback are assured to be computed from the same time stamp images.
+            </summary>
+            <param name="function">
+            callback function for getting gaze samples at eye tracking frequency.
+            </param>
+        </member>
+        <member name="P:SMI.SMIEyeTrackingUnity.Instance">
+            <summary>
+            use the instance to call SMI eye tracking functions
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.ManageGazeInput">
+            <summary>
+            handle the Raycasting and Updating of the GazeBehaviours
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StartOnePointCalibration">
+            <summary>
+            starts one-point calibration process
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StartThreePointCalibration">
+            <summary>
+            starts 3-point motion based calibration process
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StartFivePointCalibration">
+            <summary>
+            starts 5-point motion based calibration process
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRaycastHitFromGaze(UnityEngine.RaycastHit@)">
+            <summary>
+            gets the hit information in case of a successful gaze ray cast
+            </summary>
+            <param name="hitInfo"> stores the information about the ray cast in the RaycastHit object</param>
+            <returns> returns true if the ray cast was sucessful</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRayFromGaze">
+            <summary>
+            returns the gaze ray in Unity 3D world space
+            </summary>
+            <returns>ray from the camera center to the binocular gaze direction</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetGazedObject">
+            <summary>
+            returns the currently gazed at object based on a ray cast. This means that the first hit object will be returned.
+            </summary>
+            <returns> returns the gazed at object if found. Returns null if no object was hit by the gaze ray cast.</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_CloseVisualization">
+            <summary>
+            closes visualization and abort the ongoing calibration or validation
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_ResetCalibration">
+            <summary>
+            resets the calibration to 0-point
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetTimeStamp">
+            <summary>
+            returns the timestamp from the latest available gaze sameple
+            </summary>
+            <returns>the timestamp from the latest available gaze sameple</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftGazeBase">
+            <summary>
+            returns the latest available gaze base point (eye ball center) for the left eye [m]
+            <para />
+            use smi_IsValid() to check whether the data is lisenced and valid
+            </summary>
+            <returns>the latest available gaze base point (eye ball center) for the left eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightGazeBase">
+            <summary>
+            returns the latest available gaze base point (eye ball center) for the right eye [m]
+            <para />
+            use smi_IsValid() to check whether the data is lisenced and valid
+            </summary>
+            <returns>the latest available gaze base point (eye ball center) for the right eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetCameraRaycast">
+            <summary>
+            returns the latest available binocular direction for a raycast
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available direction for a raycast</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftGazeDirection">
+            <summary>
+            returns the latest available left 3D gaze direction for the left eye
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available gaze direction for the left eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightGazeDirection">
+            <summary>
+            returns the latest available right 3D gaze direction for the right eye
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available gaze direction for the right eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetBinocularPor">
+            <summary>
+            returns the latest available binocular point of regard (POR) for the device
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available binocular POR</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftPor">
+            <summary>
+            returns the latest available left eye point of regard (POR) for the device
+            <para />
+            use smi_IsValid() to check whether the data is lisenced and valid
+            </summary>
+            <returns>the latest available left eye POR</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightPor">
+            <summary>
+            returns the latest available right eye point of regard (POR) for the device
+            <para />
+            use smi_IsValid() to check whether the data is lisenced and valid
+            </summary>
+            <returns>the latest available eight eye POR</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetIPD">
+            <summary>
+            returns the latest available Interpupillary distance (IPD) [m]
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available IPD</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetIOD">
+            <summary>
+            return the latest available Interocular distance (IOD) [m]
+            <para />
+            only available if feature is licensed
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available IOD</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftPupilRadius">
+            <summary>
+            returns the last available pupil radius of the left eye [m]
+            <para />
+            only available if feature is licensed
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the lates available pupil radius for the left eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightPupilRadius">
+            <summary>
+            returns the last available pupil radius of the right eye [m]
+            <para />
+            only available if feature is licensed
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the lates available pupil radius for the right eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftPupilCenter">
+            <summary>
+            returns the last available pupil center of the left eye [m]
+            <para />
+            only available if feature is licensed
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available pupil center of the left eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightPupilCenter">
+            <summary>
+            returns the last available pupil center of the right eye [m]
+            <para />
+            only available if feature is licensed
+            <para />
+            use smi_IsValid() to check whether the data is valid
+            </summary>
+            <returns>the latest available pupil center of the right eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetLeftEyeImage">
+            <summary>
+            returns the last available eye image of the left eye as material
+            <para />
+            only available if feature is licensed
+            <para />
+            Precondition: smi_startEyeImageStreaming() has returned succesfully
+            </summary>
+            <returns>the latest available eye image of the left eye</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetRightEyeImage">
+            <summary>
+            returns the last available eye image of the right eye as material
+            <para />
+            only available if feature is licensed
+            <para />
+            Precondition: smi_startEyeImageStreaming() has returned succesfully
+            </summary>
+            <returns>the latest available eye image of the right eye</returns>
+            <returns></returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_IsValid(System.Single)">
+            <summary>
+            returns the validity of float value
+            </summary>
+            <param name="v">the SMI float value to be checked</param>
+            <returns>the validity of float value</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_IsValid(UnityEngine.Vector2)">
+            <summary>
+            returns the validity of Vector2 value
+            </summary>
+            <param name="vec2">the SMI Vector2 value to be checked</param>
+            <returns>the validity of Vector2 value</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_IsValid(UnityEngine.Vector3)">
+            <summary>
+            returns the validity of Vector3 value
+            </summary>
+            <param name="vec3">the SMI Vector3 value to be checked</param>
+            <returns>the validity of Vector3 value</returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StartStreaming">
+            <summary>
+            starts streaming of subscribed data
+            <para />
+            smi_StartStreaming is called automatically at application start
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StopStreaming">
+            <summary>
+            stops streaming of subscribed data
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StartEyeImageStreaming">
+            <summary>
+            starts eye image streaming
+            <para />
+            only available if licensed
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_StopEyeImageStreaming">
+            <summary>
+            stops eye image streaming
+            <para />
+            only available if licensed
+            </summary>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.smi_GetState">
+            <summary>
+            get the current internal state of the eye tracking API
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SMI.SMIEyeTrackingUnity.IsRunningOnDLLSupportedPlatform">
+            <summary>
+            checks if the runtime platform is supported
+            </summary>
+            <returns>returns true if the app is running on a supported device</returns>
+        </member>
+    </members>
+</doc>
