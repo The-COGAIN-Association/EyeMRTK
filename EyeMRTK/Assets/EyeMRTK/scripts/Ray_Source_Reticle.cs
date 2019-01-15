@@ -39,7 +39,7 @@ public class Ray_Source_Reticle : MonoBehaviour {
 		OutputRay output_ray = this.GetComponentInParent<OutputRay> ();
 
 		if (output_ray != null) {
-			output_ray._ray = ray;
+			output_ray._ray_raw = ray;
 		}
 	}
 }

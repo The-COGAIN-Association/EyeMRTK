@@ -54,7 +54,7 @@ public class EyeGazeRenderer : MonoBehaviour
 		Ray ray = Camera.main.ScreenPointToRay (rectGaze);
 
 	
-		output_ray._ray = ray;
+		output_ray._ray_raw= ray;
 
 
     }

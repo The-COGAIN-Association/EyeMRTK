@@ -102,7 +102,7 @@ public class Ray_Source_Tobii: MonoBehaviour
 		{
 			// Don't do anything if we are calibrating.
 			if (output_ray != null) 
-				output_ray._ray =default(Ray);
+				output_ray._ray_raw =default(Ray);
 			return;
 		}
 
@@ -130,17 +130,17 @@ public class Ray_Source_Tobii: MonoBehaviour
 				switch (eye) {
 				case (OptionsAsRay.Combined_Gaze):
 
-					output_ray._ray = last_ivrGazeData.CombinedGazeRayWorld;
+					output_ray._ray_raw = last_ivrGazeData.CombinedGazeRayWorld;
 			
 					break;
 				case (OptionsAsRay.Left_Gaze):
 
-					output_ray._ray = last_ivrGazeData.Left.GazeRayWorld;
+						output_ray._ray_raw = last_ivrGazeData.Left.GazeRayWorld;
 
 					break;
 				case (OptionsAsRay.Right_Gaze):
 
-					output_ray._ray = last_ivrGazeData.Right.GazeRayWorld;
+						output_ray._ray_raw = last_ivrGazeData.Right.GazeRayWorld;
 
 					break;
 

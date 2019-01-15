@@ -7,7 +7,11 @@ using UnityEngine.UI;
 
 public class SaveData_FakeExperiment : MonoBehaviour {
 
-	AdditionalInfoToSave _additionalInfoToSave;
+
+
+	public IDictionary<string, Dictionary<string, string>> SaveInfo =
+		new Dictionary<string, Dictionary<string, string>> {};
+
 
 	private const string FORMAT_FLOAT = "0.00000000";
 
@@ -51,8 +55,7 @@ public class SaveData_FakeExperiment : MonoBehaviour {
 	void Start () {
 
 
-		_additionalInfoToSave = GetComponent<AdditionalInfoToSave> ();
-	
+
 
 
 
@@ -129,10 +132,13 @@ public class SaveData_FakeExperiment : MonoBehaviour {
 	{
 
 		// set SaveInfo dic
-		_additionalInfoToSave.SaveInfo=new Dictionary<string, Dictionary<string, string>> {};
-		_additionalInfoToSave.SaveInfo.AddToNestedDictionary("Participant", "Name", _participantName);
-		_additionalInfoToSave.SaveInfo.AddToNestedDictionary("Participant", "Gender", _participantGender);
-		_additionalInfoToSave.SaveInfo.AddToNestedDictionary("Participant", "Age", _participantAge);
+		SaveInfo=new Dictionary<string, Dictionary<string, string>> {};
+		SaveInfo.AddToNestedDictionary("Participant", "Name", _participantName);
+		SaveInfo.AddToNestedDictionary("Participant", "Gender", _participantGender);
+		SaveInfo.AddToNestedDictionary("Participant", "Age", _participantAge);
+
+
+		SaveData.Instance.AddToList (SaveInfo);
 
 		// save more info if needed
 

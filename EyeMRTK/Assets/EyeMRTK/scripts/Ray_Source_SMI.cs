@@ -53,7 +53,7 @@ public class Ray_Source_SMI: MonoBehaviour
 		//Ray leftRay = new Ray(smiInstance.smi_GetLeftGazeBase(), smiInstance.smi_GetLeftGazeDirection());
 		//print("left ray: " + leftRay);
 
-		output_ray._ray = smiInstance.smi_GetRayFromGaze();
+		output_ray._ray_raw = smiInstance.smi_GetRayFromGaze();
 
 
 

@@ -31,6 +31,8 @@ public class PointingStatus {
 	public bool _GazeIn;
 	public bool _LaserIn;
 	public bool _ReticleIn;
+	public bool _CustomRayIn;
+
 
 }
 
@@ -45,7 +47,8 @@ public class ConfirmationStatus {
 	public float _Laser_DwellProgress = 0; 
 	public float _Reticle_DwellTime = 500.0f;
 	public float _Reticle_DwellProgress = 0; 
-
+	public float _CustomRay_DwellTime = 500.0f;
+	public float _CustomRay_DwellProgress = 0; 
 
 	public bool _MouseLeftClick;
 	public bool _MouseRightClick;
@@ -71,6 +74,8 @@ public class GazeInteractionGeneric : MonoBehaviour {
 	 int _Laser_FrameLossCount;
 	 int _Reticle_Starttime;
 	 int _Reticle_FrameLossCount;
+	int _CustomRay_Starttime;
+	int _CustomRay_FrameLossCount;
 
 
 	public int AcceptableFrameLossCount=5;
@@ -94,11 +99,16 @@ public class GazeInteractionGeneric : MonoBehaviour {
 	}
 	void OnDestroy()
 	{
-		GazeInteractionEventManager.instance.RayEnter -= Handle_RayEnter;
-		GazeInteractionEventManager.instance.RayExit -= Handle_RayExit;
-		GazeInteractionEventManager.instance.RayIn -= Handle_RayIn;
-		GazeInteractionEventManager.instance.HeadGesture -= Handle_HeadGesture;
-
+		try
+		{
+			GazeInteractionEventManager.instance.RayEnter -= Handle_RayEnter;
+			GazeInteractionEventManager.instance.RayExit -= Handle_RayExit;
+			GazeInteractionEventManager.instance.RayIn -= Handle_RayIn;
+			GazeInteractionEventManager.instance.HeadGesture -= Handle_HeadGesture;
+		}
+		catch (Exception e)
+		{
+		}
 	}
 
 
@@ -114,7 +124,7 @@ public class GazeInteractionGeneric : MonoBehaviour {
 
 		try{
 			// We don't care about right and left here
-			bool leftTrigger = SteamVR_Controller.Input (SteamVR_Controller.GetDeviceIndex (SteamVR_Controller.DeviceRelation.Leftmost)).GetHairTrigger ();
+			bool leftTrigger = SteamVR_Controller.Input (SteamVR_Controller.GetDeviceIndex (SteamVR_Controller.DeviceRelation.Leftmost)).GetHairTrigger();
 			bool rightTrigger = SteamVR_Controller.Input (SteamVR_Controller.GetDeviceIndex (SteamVR_Controller.DeviceRelation.Rightmost)).GetHairTrigger ();
 			confirmationStatus._TriggerPressed = leftTrigger | rightTrigger;
 		}
@@ -203,6 +213,34 @@ public class GazeInteractionGeneric : MonoBehaviour {
 			}
 		}
 
+
+		if (pointingStatus._CustomRayIn)
+		{
+			_CustomRay_FrameLossCount = 0;
+			//progress dwell timer
+			float prog = (Environment.TickCount - _CustomRay_Starttime) / confirmationStatus._CustomRay_DwellTime;
+			confirmationStatus._CustomRay_DwellProgress = Mathf.Clamp (prog,0,1);
+		}
+		else
+		{
+
+
+			if (_CustomRay_FrameLossCount < AcceptableFrameLossCount)
+			{
+				//progress dwell timer
+				float prog = (Environment.TickCount - _CustomRay_Starttime) / confirmationStatus._CustomRay_DwellTime;
+				confirmationStatus._CustomRay_DwellProgress = Mathf.Clamp (prog,0,1);
+				_CustomRay_FrameLossCount ++;
+			}
+			else
+			{
+
+				_CustomRay_Starttime = Environment.TickCount;
+				confirmationStatus._CustomRay_DwellProgress = 0;
+			}
+		}
+
+
 	}
 
 
@@ -218,9 +256,12 @@ public class GazeInteractionGeneric : MonoBehaviour {
 
 			} else if (e.Raycast_RayName == "ReticleRayForInteraction") {
 				pointingStatus._ReticleIn = true;
+			
+			} else if (e.Raycast_RayName == "CustomRayForInteraction") {
+				pointingStatus._CustomRayIn = true;
 			}
-
 		}
+
 	}
 	void Handle_RayExit(object sender, GazeInteractionEventArgs e){
 		if (e.Raycast_GameObject.gameObject == this.gameObject) {
@@ -234,7 +275,11 @@ public class GazeInteractionGeneric : MonoBehaviour {
 
 			} else if (e.Raycast_RayName == "ReticleRayForInteraction") {
 				pointingStatus._ReticleIn = false;
+			
+			} else if (e.Raycast_RayName == "CustomRayForInteraction") {
+				pointingStatus._CustomRayIn = false;
 			}
+		
 		}
 	}
 	void Handle_RayIn(object sender, GazeInteractionEventArgs e){
@@ -250,6 +295,10 @@ public class GazeInteractionGeneric : MonoBehaviour {
 			} else if (e.Raycast_RayName == "ReticleRayForInteraction") {
 				pointingStatus._ReticleIn = true;
 		
+			
+			} else if (e.Raycast_RayName == "CustomRayForInteraction") {
+				pointingStatus._CustomRayIn = true;
+
 			}
 		}
 	}

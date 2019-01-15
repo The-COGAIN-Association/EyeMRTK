@@ -29,6 +29,7 @@ public class Point_and_Highlight : MonoBehaviour {
 	public bool Gaze=true;
 	public bool Reticle=true;
 	public bool Laser=true;
+	public bool CustomRay=true;
 
 	public bool GazeAndReticle=false;
 
@@ -61,6 +62,7 @@ public class Point_and_Highlight : MonoBehaviour {
 			( Gaze && _gazeInteractionGeneric.pointingStatus._GazeIn) |
 			( Reticle && _gazeInteractionGeneric.pointingStatus._ReticleIn) |
 			( Laser && _gazeInteractionGeneric.pointingStatus._LaserIn) |
+			( CustomRay && _gazeInteractionGeneric.pointingStatus._CustomRayIn) |
 			(GazeAndReticle &&  _gazeInteractionGeneric.pointingStatus._GazeIn &&_gazeInteractionGeneric.pointingStatus._ReticleIn)
 		)
 			

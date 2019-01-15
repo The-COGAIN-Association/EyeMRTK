@@ -55,11 +55,4 @@ public static class DictionaryExtensions
 	}
 }
 
-public class AdditionalInfoToSave : MonoBehaviour {
 
-	public IDictionary<string, Dictionary<string, string>> SaveInfo =
-		new Dictionary<string, Dictionary<string, string>> {};
-
-
-
-}

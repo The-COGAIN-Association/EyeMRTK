@@ -65,7 +65,7 @@ public class GazeInteractionEventManager : MonoBehaviour {
 
 				if (!gazeInteractionEventManager)
 				{
-					Debug.LogError ("There needs to be one active GazeInteractionEventManager script on a GameObject in your scene.");
+					Debug.LogWarning ("EYEMRTK error: There needs to be one active GazeInteractionEventManager script on a GameObject in your scene.");
 				}
 			
 			}

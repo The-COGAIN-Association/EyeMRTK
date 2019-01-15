@@ -43,7 +43,7 @@ public class Ray_Source_Mouse : MonoBehaviour {
 
 		if (output_ray != null) {
 			//print ("---mouse gaze ray---" + ray);
-			output_ray._ray = ray;
+			output_ray._ray_raw = ray;
 		}
 
 	}

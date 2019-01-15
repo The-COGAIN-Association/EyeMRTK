@@ -68,9 +68,8 @@ public class SaveData : MonoBehaviour
 	}
 
 	[SerializeField]
-	[Tooltip("Additional info to save. Drag and drop a game object that contains assest with public nested dictionary named SaveInfo.")]
-	private GameObject[] AdditionalInfo;
-
+//	[Tooltip("Additional info to save. Drag and drop a game object that contains assest with public nested dictionary named SaveInfo.")]
+	public List<IDictionary<string, Dictionary<string, string>>> AdditionalInfo = new List<IDictionary<string, Dictionary<string, string>>>();
 
 
 	private XmlWriterSettings _fileSettings;
@@ -158,7 +157,11 @@ public class SaveData : MonoBehaviour
 
 	}
 
+	public void AddToList(IDictionary<string, Dictionary<string, string>>  dic){
+		if (saveData)
+			AdditionalInfo.Add (dic);
 
+	}
 
 
 	private XmlWriter  WriteAllData (XmlWriter file)
@@ -173,30 +176,34 @@ public class SaveData : MonoBehaviour
 	private XmlWriter WriteAnyAdditionalInfo(XmlWriter file)
 	{
 
-		// search for SaveInfo in every component of childrens of every AdditionalInfo object
 
-		foreach(GameObject obj in AdditionalInfo)
-		{
-			AdditionalInfoToSave[] Additions=obj.GetComponentsInChildren<AdditionalInfoToSave> ();
-			foreach(AdditionalInfoToSave adds in Additions)
-			{
-			  
-				foreach (KeyValuePair<string,  Dictionary<string, string>> kvp in adds.SaveInfo)
-				{
-					file.WriteStartElement (kvp.Key);
 
-					foreach (KeyValuePair<string, string> kvp2 in kvp.Value) {
+		foreach (IDictionary<string, Dictionary<string, string>> idic in AdditionalInfo) {
 
-						file.WriteAttributeString (kvp2.Key, kvp2.Value);
 
-					}
-					file.WriteEndElement ();
+			foreach (KeyValuePair<string,  Dictionary<string, string>> kv in idic) {
+				
+
+				file.WriteStartElement (kv.Key);
+
+				foreach (KeyValuePair<string, string> kvp2  in kv.Value) {
+
+					file.WriteAttributeString (kvp2.Key, kvp2.Value);
+
 				}
-
-
+				file.WriteEndElement ();
 			}
 
+
 		}
+
+		AdditionalInfo = new List<IDictionary<string, Dictionary<string, string>>>();
+
+
+
+
+		
+
 		return file;
 
 	}

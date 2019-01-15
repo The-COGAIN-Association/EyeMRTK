@@ -37,27 +37,37 @@ public class ProcessGaze : MonoBehaviour
 	const int MAXHISTORY = 150; // 90 would be about one second
 	[SerializeField]
 	[Tooltip("smooting winodw")]
-	[Range(0, MAXHISTORY)]
+	[Range(1, MAXHISTORY)]
 	public int windowSize = 10;
 	[SerializeField]
-	[Tooltip("saccade minimum amplitude in degrees")]
-	[Range(0.0f, 2.0f)]
-	public float SACCADETHRESHOLD = 1.5f; // visual angle to detect saccade
-	List<Vector3> history = new List<Vector3>();
+	[Tooltip("saccade minimum velocity")]
+	[Range(0.0f, 5.0f)]
+	public float SACCADE_VEL_THRESHOLD = 1.5f; // visual angle to detect saccade
+
+//	[SerializeField]
+//	[Tooltip("saccade minimum accelaration")]
+//	[Range(0.0f, 3.0f)]
+//	public float SACCADE_ACC_THRESHOLD = 0.5f; // visual angle to detect saccade
+//
 
 
-	public Ray _ray_raw;
-	public Ray _ray_processed;
+	// dont use from outside
+	List<Vector3> history_tmp = new List<Vector3>();
+	// dont use from outside
+	List<Vector3> history_2_tmp = new List<Vector3>();
+
+	List<Vector3> history_smooth_fixations = new List<Vector3>();
+	List<Vector3> history_smooth_all = new List<Vector3>();
+	List<Vector3> history_origin = new List<Vector3>();
 
 
+	List<float> history_vel = new List<float>();
+	List<float> history_acc = new List<float>();
 
+	bool _is_in_saccade=false;
+	int _ray_saccade_onset_index=0;
 
-	private void Start()
-	{
-
-
-	}
-
+//	Vector3 _latest_origin=Vector3.zero;
 
 
 
@@ -65,70 +75,188 @@ public class ProcessGaze : MonoBehaviour
 	{
 		if (RaySource!=null && RaySource.GetComponent<OutputRay>()!=null)
 		{
-			_ray_raw = RaySource.GetComponent<OutputRay> ()._ray;
-			ProcessData(_ray_raw);
+			
+			ProcessData(RaySource.GetComponent<OutputRay> ()._ray_raw);
 		}
 
 	}
 
 
 
+	private void UpdateOutputRay()
+	{
+		RaySource.GetComponent<OutputRay> ()._ray_smooth_fixations = new Ray(history_origin [history_origin.Count - 1], history_smooth_fixations[history_smooth_fixations.Count-1]);
+		RaySource.GetComponent<OutputRay> ()._ray_smooth_all = new Ray(history_origin [history_origin.Count - 1],history_smooth_all[history_smooth_all.Count-1] );
+		RaySource.GetComponent<OutputRay> ()._is_in_saccade = _is_in_saccade;
+
+		if (_ray_saccade_onset_index == 0 && history_smooth_fixations.Count > 2)
+		{
+			RaySource.GetComponent<OutputRay> ()._ray_saccade_onset = new Ray (history_origin [history_origin.Count - 3], history_smooth_fixations [history_smooth_fixations.Count - 3]);
+		}
+		else if (_ray_saccade_onset_index != 0 && history_smooth_fixations.Count > _ray_saccade_onset_index && history_origin.Count>_ray_saccade_onset_index )
+		{
+			
+		
+			RaySource.GetComponent<OutputRay> ()._ray_saccade_onset = new Ray (history_origin [history_origin.Count - _ray_saccade_onset_index], history_smooth_fixations [history_smooth_fixations.Count - _ray_saccade_onset_index]);
+		}
+		if (history_2_tmp.Count > 1 && history_smooth_all.Count>1 && history_smooth_fixations.Count>1)
+		{
+			RaySource.GetComponent<OutputRay> ()._diff_quaternion_raw = Quaternion.FromToRotation (history_2_tmp [history_2_tmp.Count - 1], history_2_tmp [history_2_tmp.Count - 2]);
+			RaySource.GetComponent<OutputRay> ()._diff_quaternion_smooth_all = Quaternion.FromToRotation (history_smooth_all [history_smooth_all.Count - 1], history_smooth_all [history_smooth_all.Count - 2]);
+			RaySource.GetComponent<OutputRay> ()._diff_quaternion_smooth_fixations = Quaternion.FromToRotation (history_smooth_fixations [history_smooth_fixations.Count - 1], history_smooth_fixations [history_smooth_fixations.Count - 2]);
+
+		}
+
+		RaySource.GetComponent<OutputRay> ()._ray_acc= history_acc[history_acc.Count-1] ;
+		RaySource.GetComponent<OutputRay> ()._ray_vel= history_vel[history_vel.Count-1] ;
+
+	}
 
 	private void ProcessData(Ray ray)
 	{
+		AddToList(history_origin,ray.origin,false);
 
 
-			Vector3 _origin = new Vector3(0, 0, 0);
-		SmoothData(ray.direction);
+		AddToList(history_tmp,ray.direction,true);
+		AddToList(history_2_tmp,ray.direction,false);
+
 		// we don't need to smooth the origin
-		_origin = ray.origin;
+		AddToList(history_smooth_fixations	,ComputeAverage(history_tmp),false);
 
 
-		Vector3 vec = ComputeAverage(history);
+		AddToList(history_smooth_all	,ComputeAverage(history_2_tmp),false);
 
-			_ray_processed = new Ray(_origin, vec);
+	
 
 
+		AddToList(history_vel,CalculateVelocity5(history_2_tmp));
+		AddToList(history_acc,CalculateAcceleration(history_vel));
+
+		UpdateOutputRay ();
 	}
 
-	private void SmoothData(Vector3 value)
+	private void AddToList(List<float> list,float value)
 	{
 
-		history.Add(value);
-		if (history.Count > MAXHISTORY) history.RemoveAt(0);
-		if (CheckSaccade(history))
-		{
-			history.Clear();
-			history.Add(value);
-		}
-			
+		list.Add(value);
+		if (list.Count > MAXHISTORY) list.RemoveAt(0);
 
 	}
-
-
-
-	private bool CheckSaccade(List<Vector3> history)
+	private void AddToList(List<Vector3> list,Vector3 value,bool OnlyFixations)
 	{
-		if (history.Count >= 2)
-		{
-			// check angle of current and previous gaze sample. if bigger, its a saccade, and then reset history
-			Vector3 currentgaze = history[history.Count - 1];
-			Vector3 lastgaze = history[history.Count - 2];
 
-			Vector3 origin = Vector3.zero;
-			Vector3 currentGazeDirection = currentgaze - origin;
-			Vector3 lastGazeDirection = lastgaze - origin;
+		list.Add(value);
+		if (list.Count > MAXHISTORY) list.RemoveAt(0);
 
-			float currentangle = Vector3.Angle(currentGazeDirection, lastGazeDirection);
 
-			if (currentangle > SACCADETHRESHOLD)
-			{
-				return true;
+
+		if (OnlyFixations) {
+			if (CheckSaccade ()) {
+				list.Clear ();
+				list.Add (value);
 			}
 
 		}
-		return false;
+
 	}
+
+	private float CalculateVelocity5(List<Vector3> list)
+	{
+
+
+		if (list.Count >= 5) {
+			// check angle of current and previous gaze sample. if bigger, its a saccade, and then reset history
+
+			Vector3 vec = list [list.Count - 1].normalized;
+			float H_ang_x_0 = Mathf.Acos (vec.x) * Mathf.Rad2Deg;
+			float H_ang_y_0 = Mathf.Acos (vec.y) * Mathf.Rad2Deg;
+			float H_ang_z_0 = Mathf.Acos (vec.z) * Mathf.Rad2Deg;
+
+			vec = list [list.Count - 2].normalized;
+			float H_ang_x_1 = Mathf.Acos (vec.x) * Mathf.Rad2Deg;
+			float H_ang_y_1 = Mathf.Acos (vec.y) * Mathf.Rad2Deg;
+			float H_ang_z_1 = Mathf.Acos (vec.z) * Mathf.Rad2Deg;
+
+			vec = list [list.Count - 4].normalized;
+			float H_ang_x_3 = Mathf.Acos (vec.x) * Mathf.Rad2Deg;
+			float H_ang_y_3 = Mathf.Acos (vec.y) * Mathf.Rad2Deg;
+			float H_ang_z_3 = Mathf.Acos (vec.z) * Mathf.Rad2Deg;
+
+			vec = list [list.Count - 5].normalized;
+			float H_ang_x_4 = Mathf.Acos (vec.x) * Mathf.Rad2Deg;
+			float H_ang_y_4 = Mathf.Acos (vec.y) * Mathf.Rad2Deg;
+			float H_ang_z_4 = Mathf.Acos (vec.z) * Mathf.Rad2Deg;
+
+			// weighted moving average over five data samples to suppress noise 
+			float vel_x = (H_ang_x_0 + H_ang_x_1 - H_ang_x_3 - H_ang_x_4) / 6;
+			float vel_y = (H_ang_y_0 + H_ang_y_1 - H_ang_y_3 - H_ang_y_4) / 6;
+			float vel_z = (H_ang_z_0 + H_ang_z_1 - H_ang_z_3 - H_ang_z_4) / 6;
+
+			// vel
+			return (new Vector3 (vel_x, vel_y, vel_z)).magnitude;
+		} else {
+			return 0.0f;
+		
+		}
+
+	}
+
+	private float CalculateAcceleration(List<float> list)
+	{
+		
+
+
+//		if (list.Count >= 5) {
+//			return Mathf.Abs (  (list [list.Count - 1] + list [list.Count - 2] - list [list.Count - 4] - list [list.Count - 5]) / 6 );
+//		} else {
+//			return 0.0f;
+//
+//		}
+
+		return 0.0f;
+	}
+
+	private bool CheckSaccade()
+	{
+		_is_in_saccade = false;
+
+	
+			
+		if ( history_vel.Count >2  &&  history_vel [history_vel.Count - 1] > SACCADE_VEL_THRESHOLD)
+		{
+
+
+			_is_in_saccade = true;
+
+
+			// --- get the ray of the begining of the saccade --- 
+			// searh back through velocity list and find the last occasion of vel < epsilon
+			// we then return the smooth value from history_smooth_fixations
+
+			float vel_thresh_2 = 0.5f;
+			_ray_saccade_onset_index = 0;
+			for (int i = 1; i < history_vel.Count; i++)
+			{
+				if (history_vel [history_vel.Count - i] < vel_thresh_2)
+				{
+
+					if ((i -6) < history_origin.Count   &&  (i-6)>0)
+					{
+						_ray_saccade_onset_index = i - 6;// lag compensation
+					}
+					break;
+				}
+			}
+
+		}
+		
+
+		return _is_in_saccade;
+
+	}
+
+
+
 
 	private Vector3 ComputeAverage(List<Vector3> history)
 	{

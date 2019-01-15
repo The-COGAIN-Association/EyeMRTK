@@ -28,13 +28,20 @@ public class InteractionRay : MonoBehaviour {
 
 	// Use this for initialization
 
-	public Ray _ray;
+	public Ray _ray_raw;
+	public Ray _ray_smooth_all;
+	public Ray _ray_smooth_fixations;
+	public bool _is_in_saccade;
+	public Ray _ray_saccade_onset;
+	public float _ray_vel;
+	public float _ray_acc;
+	public Quaternion _diff_quaternion_raw;
+	public Quaternion _diff_quaternion_smooth_all;
+	public Quaternion _diff_quaternion_smooth_fixations;
 
 
 
-
-
-	private RaycastHit[] hits;
+	public RaycastHit[] hits;
 	public List<GameObject> hit_objects_list;//=new List<GameObject>();
 	private List<GameObject> pre_hit_objects_list;//=new List<GameObject>();
 
@@ -57,7 +64,7 @@ public class InteractionRay : MonoBehaviour {
 
 
 		// RayCasting
-		hits = Physics.RaycastAll(_ray, Mathf.Infinity);
+		hits = Physics.RaycastAll(_ray_smooth_fixations, Mathf.Infinity);
 
 		List<GameObject> temp = new List<GameObject>();
 

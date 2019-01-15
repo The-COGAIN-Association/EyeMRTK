@@ -31,7 +31,8 @@ public class Confirm_and_Highlight : MonoBehaviour {
 	{
 		Gaze,
 		Reticle,
-		Laser
+		Laser,
+		CustomRay
 	}
 	public PointingWith pointingWith;
 
@@ -78,14 +79,16 @@ public class Confirm_and_Highlight : MonoBehaviour {
 		bool fixation =
 			(pointingWith == PointingWith.Gaze && _gazeInteractionGeneric.pointingStatus._GazeIn) |
 			(pointingWith == PointingWith.Reticle && _gazeInteractionGeneric.pointingStatus._ReticleIn) |
-			(pointingWith == PointingWith.Laser && _gazeInteractionGeneric.pointingStatus._LaserIn);
+			(pointingWith == PointingWith.Laser && _gazeInteractionGeneric.pointingStatus._LaserIn)|
+			(pointingWith == PointingWith.CustomRay && _gazeInteractionGeneric.pointingStatus._CustomRayIn) ;
 
 		bool confirmation = false;
 		if (confirmWith == ConfirmWith.Dwell) {
 			if(
 			(pointingWith == PointingWith.Gaze && _gazeInteractionGeneric.confirmationStatus._Gaze_DwellProgress==1) |
 			(pointingWith == PointingWith.Reticle && _gazeInteractionGeneric.confirmationStatus._Reticle_DwellProgress==1) |
-			(pointingWith == PointingWith.Laser && _gazeInteractionGeneric.confirmationStatus._Laser_DwellProgress==1)
+			(pointingWith == PointingWith.Laser && _gazeInteractionGeneric.confirmationStatus._Laser_DwellProgress==1) |
+				(pointingWith == PointingWith.CustomRay && _gazeInteractionGeneric.confirmationStatus._CustomRay_DwellProgress==1)
 			)
 			confirmation=true;
 		}else if ( (confirmWith == ConfirmWith.HeadDown && _gazeInteractionGeneric.confirmationStatus._HeadDown) |

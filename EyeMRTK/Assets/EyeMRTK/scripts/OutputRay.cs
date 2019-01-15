@@ -27,7 +27,22 @@ using UnityEngine;
 
 public class  OutputRay: MonoBehaviour {
 
-	public Ray _ray;
+	public Ray _ray_raw;
+	public Ray _ray_smooth_all;
+	public Ray _ray_smooth_fixations;
+	public bool _is_in_saccade;
+	public Ray _ray_saccade_onset;
+	public float _ray_vel;
+	public float _ray_acc;
+	public Quaternion _diff_quaternion_raw;
+	public Quaternion _diff_quaternion_smooth_all;
+	public Quaternion _diff_quaternion_smooth_fixations;
+
+		
+
+
+
+
 
 	//!!!  The first (default value) must be None otherwise it couses a infinite loop. 
 	public enum InteractionRayType
@@ -35,7 +50,8 @@ public class  OutputRay: MonoBehaviour {
 		None ,
 		GazeRayForInteraction,
 		ReticleRayForInteraction,
-		LaserRayForInteraction
+		LaserRayForInteraction,
+		CustomRayForInteraction
 	}
 
 
@@ -59,21 +75,38 @@ public class  OutputRay: MonoBehaviour {
 			//Add Components
 			newObj.AddComponent<InteractionRay> ();
 
+
 		}
 		original_UseAs = UseThisAs;
 	}
 	private void UpdateInteractionRayObject()
 	{
 
-		Ray ray_used_for_interaction = _ray;
-		ProcessGaze _processedRay = this.GetComponentInParent<ProcessGaze> ();
-		if (_processedRay!=null)
-			ray_used_for_interaction = _processedRay._ray_processed;
 
+
+	
 
 		GameObject interactionRayObject = GameObject.Find(UseThisAs.ToString());
 		if (interactionRayObject != null)
-			interactionRayObject.GetComponent<InteractionRay> ()._ray = ray_used_for_interaction;
+		{
+
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_raw = _ray_raw;
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_smooth_all = _ray_smooth_all;
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_smooth_fixations = _ray_smooth_fixations;
+
+			interactionRayObject.GetComponent<InteractionRay> ()._is_in_saccade = _is_in_saccade;
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_saccade_onset = _ray_saccade_onset;
+
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_vel = _ray_vel;
+			interactionRayObject.GetComponent<InteractionRay> ()._ray_acc = _ray_acc;
+
+			interactionRayObject.GetComponent<InteractionRay> ()._diff_quaternion_raw = _diff_quaternion_raw;
+			interactionRayObject.GetComponent<InteractionRay> ()._diff_quaternion_smooth_all = _diff_quaternion_smooth_all;
+			interactionRayObject.GetComponent<InteractionRay> ()._diff_quaternion_smooth_fixations = _diff_quaternion_smooth_fixations;
+
+
+
+		}
 	}
 
 	private void Start()

@@ -52,7 +52,7 @@ public class Ray_Source_Controller : MonoBehaviour {
 		OutputRay output_ray = this.GetComponentInParent<OutputRay> ();
 
 		if (output_ray != null) {
-			output_ray._ray = pointerRay;
+			output_ray._ray_raw = pointerRay;
 		}
 
 

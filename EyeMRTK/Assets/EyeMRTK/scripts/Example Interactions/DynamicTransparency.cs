@@ -55,7 +55,7 @@ public class DynamicTransparency : MonoBehaviour {
 		GameObject rayObj = GameObject.Find (RelativeTo.ToString ());
 		if (rayObj != null) {
 			
-			CurrentDistIs = Vector3.Angle (rayObj.GetComponent<InteractionRay>()._ray.direction, this.transform.position - rayObj.GetComponent<InteractionRay>()._ray.origin);
+			CurrentDistIs = Vector3.Angle (rayObj.GetComponent<InteractionRay>()._ray_smooth_fixations .direction, this.transform.position - rayObj.GetComponent<InteractionRay>()._ray_smooth_fixations.origin);
 
 			Color color = GetComponent<Renderer> ().material.color;
 			float dist_clamped = Mathf.Clamp (CurrentDistIs, DistCutoffClose, DistCutoffFar);

@@ -28,12 +28,21 @@ using UnityEngine;
 public class RayCastTrail : MonoBehaviour {
 	[SerializeField]
 
-	[Tooltip("leave empty if you want to use the raw combined gaze ray")]
-	public ProcessGaze _processGaze;
+
+	public enum Ray_To_Show
+	{
+		Raw,
+		  _ray_smooth_all,
+		  _ray_smooth_fixations,
+	}
+
+	[SerializeField]
+	public Ray_To_Show _ray_To_Show= Ray_To_Show.Raw;
+
 
 	[SerializeField]
 	[Tooltip("The color of the particle")]
-	private Color _color = Color.green;
+	public Color _color = Color.green;
 
 	[SerializeField]
 	[Range(0, 1000)]
@@ -280,10 +289,15 @@ public class RayCastTrail : MonoBehaviour {
 	private  Ray GetRay()
 	{
 
+		OutputRay _outputRay = this.transform.GetComponentInParent<OutputRay> ();
+		if( _ray_To_Show==Ray_To_Show.Raw)
+			return _outputRay._ray_raw ; 
+		if( _ray_To_Show==Ray_To_Show._ray_smooth_all)
+			return _outputRay._ray_smooth_all ; 
+		if( _ray_To_Show==Ray_To_Show._ray_smooth_fixations)
+			return _outputRay._ray_smooth_fixations ; 
+		
 
-
-		return (_processGaze!=null)? _processGaze._ray_processed: default(Ray) ; 
-
-	
+		return default(Ray);
 	}
 }
