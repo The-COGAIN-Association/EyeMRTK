@@ -62,7 +62,6 @@ public class ProcessGaze : MonoBehaviour
 
 
 	List<float> history_vel = new List<float>();
-	List<float> history_acc = new List<float>();
 
 	bool _is_in_saccade=false;
 	int _ray_saccade_onset_index=0;
@@ -107,7 +106,7 @@ public class ProcessGaze : MonoBehaviour
 
 		}
 
-		RaySource.GetComponent<OutputRay> ()._ray_acc= history_acc[history_acc.Count-1] ;
+
 		RaySource.GetComponent<OutputRay> ()._ray_vel= history_vel[history_vel.Count-1] ;
 
 	}
@@ -130,7 +129,6 @@ public class ProcessGaze : MonoBehaviour
 
 
 		AddToList(history_vel,CalculateVelocity5(history_2_tmp));
-		AddToList(history_acc,CalculateAcceleration(history_vel));
 
 		UpdateOutputRay ();
 	}
@@ -200,21 +198,7 @@ public class ProcessGaze : MonoBehaviour
 		}
 
 	}
-
-	private float CalculateAcceleration(List<float> list)
-	{
 		
-
-
-//		if (list.Count >= 5) {
-//			return Mathf.Abs (  (list [list.Count - 1] + list [list.Count - 2] - list [list.Count - 4] - list [list.Count - 5]) / 6 );
-//		} else {
-//			return 0.0f;
-//
-//		}
-
-		return 0.0f;
-	}
 
 	private bool CheckSaccade()
 	{

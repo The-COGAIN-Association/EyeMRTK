@@ -33,7 +33,8 @@ public class  OutputRay: MonoBehaviour {
 	public bool _is_in_saccade;
 	public Ray _ray_saccade_onset;
 	public float _ray_vel;
-	public float _ray_acc;
+
+
 	public Quaternion _diff_quaternion_raw;
 	public Quaternion _diff_quaternion_smooth_all;
 	public Quaternion _diff_quaternion_smooth_fixations;
@@ -98,7 +99,7 @@ public class  OutputRay: MonoBehaviour {
 			interactionRayObject.GetComponent<InteractionRay> ()._ray_saccade_onset = _ray_saccade_onset;
 
 			interactionRayObject.GetComponent<InteractionRay> ()._ray_vel = _ray_vel;
-			interactionRayObject.GetComponent<InteractionRay> ()._ray_acc = _ray_acc;
+
 
 			interactionRayObject.GetComponent<InteractionRay> ()._diff_quaternion_raw = _diff_quaternion_raw;
 			interactionRayObject.GetComponent<InteractionRay> ()._diff_quaternion_smooth_all = _diff_quaternion_smooth_all;

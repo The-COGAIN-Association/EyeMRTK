@@ -34,7 +34,8 @@ public class InteractionRay : MonoBehaviour {
 	public bool _is_in_saccade;
 	public Ray _ray_saccade_onset;
 	public float _ray_vel;
-	public float _ray_acc;
+
+
 	public Quaternion _diff_quaternion_raw;
 	public Quaternion _diff_quaternion_smooth_all;
 	public Quaternion _diff_quaternion_smooth_fixations;
