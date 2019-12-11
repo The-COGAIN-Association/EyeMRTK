@@ -35,4 +35,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+Assets/TobiiPro/
 Assets/TobiiPro*
