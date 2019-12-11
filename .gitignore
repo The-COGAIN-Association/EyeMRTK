@@ -1,3 +1,5 @@
 Assets/TobiiPro*
 Assets/TobiiPro/
 *.xml
+/EyeMRTK/Assets/TobiiPro/
+/EyeMRTK/Assets/TobiiPro*
